@@ -1,9 +1,27 @@
-drive_total_l = 147; // Unused here, just for reference
-drive_total_w = 102; // Unused here, just for reference
+/*
+
+3.5in Drive Stacker - v1.0 - (C) 2022 Matthew Nielsen
+https://github.com/xunker/random_scad/3_5_drive_stacker
+
+Commercial use/reproduction of code or resulting rendered output is strictly forbidden without
+written consent of author. All other use/reproduction/modification shall be under these same terms
+and must include this notice and must include original author information.
+
+*/
+
+
+// Rotation is to put flat side down for printing
+rotate([0, -90, 0]) {
+  // single();
+  stack_of_two();
+  // stack_of_three();
+}
+
+
+/* SETTINGS AND CODE BELOW */
 drive_total_h = 25;
 
-// screw hole offsets, reference from https://toshiba.semicon-storage.com/us/storage/support/faq/storage-holes.html
-// measurements are fron the rear (connector) end
+// Screw hole offsets measurements are fron the rear (connector) end
 screw_x_offsets = [
   28.5, // +- 0.25
   130.1 // +- 0.5
@@ -33,10 +51,6 @@ attachment_screw_countersink_h = 3.5;
 
 ff = 0.01;
 
-module drive_dummy() {
-  cube([drive_total_w, drive_total_l, drive_total_h]);
-}
-
 module raw_column() {
   cube([column_t, column_w, drive_total_h + (shelf_t * 2) + drive_addt_h]);
 }
@@ -55,7 +69,6 @@ module drive_shelf(attachment_screw_holes=true) {
 }
 
 module attachment_shelf(attachment_screw_holes=true) {
-  // cube([shelf_w, shelf_l, shelf_t]);
   difference() {
     hull() {
       cube([ff, shelf_l, shelf_t]);
@@ -89,50 +102,9 @@ module complete_column(upper_attachment_screw_holes=true, lower_attachment_screw
   }
 }
 
-
-module old_complete_column_w_attachment() {
-  module angle_screw_hole() {
-    translate([shelf_w/2, 0, 0]) rotate([0, 45, 0]) translate([0, column_w/2, -column_t*2]) {
-        $fn=16;
-        cylinder(d=attachment_screw_hole_d, h=column_t*4);
-        cylinder(d=attachment_screw_countersink_d, h=attachment_screw_countersink_h*2);
-        translate([0, 0, (column_t*4)-(attachment_screw_countersink_h*3.5)]) cylinder(d=attachment_screw_countersink_d, h=attachment_screw_countersink_h*3.5);
-      }
-  }
-  difference() {
-    complete_column();
-    angle_screw_hole();
-    translate([0, 0, drive_total_h + shelf_t + drive_addt_h]) {
-      angle_screw_hole();
-    }
-  }
+module single() {
+  complete_column();
 }
-
-// module complete_column_w_attachment() {
-//   difference() {
-//     complete_column();
-
-//   }
-// }
-
-// difference() {
-//   union() {
-//     complete_column();
-//     translate([0, 0, drive_total_h + shelf_t + drive_addt_h]) {
-//       color("blue") complete_column();
-//     }
-//   }
-//   translate([0, 0, drive_total_h + shelf_t + drive_addt_h]) {
-//     translate([shelf_w/2, 0, 0]) rotate([0, 45, 0]) translate([0, column_w/2, -column_t*2]) {
-//       $fn=16;
-//       cylinder(d=attachment_screw_hole_d, h=column_t*4);
-//       cylinder(d=attachment_screw_countersink_d, h=attachment_screw_countersink_h*2);
-//       translate([0, 0, (column_t*4)-(attachment_screw_countersink_h*3.5)]) cylinder(d=attachment_screw_countersink_d, h=attachment_screw_countersink_h*3.5);
-//     }
-//   }
-// }
-
-// translate([column_t, 0, shelf_t]) %drive_dummy();
 
 //stack of two
 module stack_of_two() {
@@ -146,7 +118,3 @@ module stack_of_three() {
   translate([0, 0, (shelf_t*2)+drive_total_h+drive_addt_h]) complete_column(upper_attachment_screw_holes=false, lower_attachment_screw_holes=false);
   complete_column(upper_attachment_screw_holes=false, lower_attachment_screw_holes=true);
 }
-
-stack_of_two();
-// stack_of_three();
-
